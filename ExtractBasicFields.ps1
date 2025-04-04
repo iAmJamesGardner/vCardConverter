@@ -17,5 +17,4 @@ foreach ($field in $fieldMap.Keys) {
     if ($match.Count -gt 0) { $data[$fieldMap[$field]] = $match[0].Groups[2].Value.Trim() }
 }
 
-
 return $data
