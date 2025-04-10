@@ -1,0 +1,23 @@
+param($contact)
+
+$contact = $contact -split "`r`n"
+$matches = ($contact | Select-String -Pattern "^EMAIL(;[Tt][Yy][Pp][Ee]=.*?)?:(.+)").Matches
+
+$emails = @()
+foreach ($match in $matches) {
+    $email = $match.Groups[2].Value.Trim()
+    if (-not ($emails -contains $email)) {
+        $emails += $email
+    }
+}
+
+# Construct Outlook-compatible email fields
+$data = @{}
+for ($i = 0; $i -lt [math]::Min($emails.Count, 3); $i++) {
+    $suffix = if ($i -eq 0) { "" } else { " $($i + 1)" }
+    $data["E-mail Address$suffix"]      = $emails[$i]
+    $data["E-mail Display Name$suffix"] = $emails[$i]
+    $data["E-mail Type$suffix"]         = "SMTP"
+}
+
+return $data
